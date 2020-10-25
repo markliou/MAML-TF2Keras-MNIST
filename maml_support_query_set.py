@@ -2,30 +2,29 @@ import numpy as np
 import tensorflow as tf # use the tf2.4
 import tensorflow_datasets as tfds 
 import tensorflow_addons as tfa
-from adabelief_tf import AdaBeliefOptimizer
-
-inner_lr = 1E-3
-outter_lr = 1E-3
+# from adabelief_tf import AdaBeliefOptimizer
+inner_lr = 1E-4
+outter_lr = 1E-4
 inner_task_loop_no = 32 # give 32 tasks of 2ways-1shot
 # opt_inner = tf.keras.optimizers.Adagrad(inner_lr)
 # opt_outter = tf.keras.optimizers.Adagrad(outter_lr, clipnorm=1.)
-# opt_inner = tfa.optimizers.NovoGrad(inner_lr)
-# opt_outter = tfa.optimizers.NovoGrad(outter_lr, clipnorm=1.)
+opt_inner = tfa.optimizers.NovoGrad(inner_lr)
+opt_outter = tfa.optimizers.NovoGrad(outter_lr, clipnorm=1.)
 # opt_inner = tfa.optimizers.RectifiedAdam(inner_lr)
 # opt_outter = tfa.optimizers.RectifiedAdam(outter_lr, clipnorm=1.)
-opt_inner = AdaBeliefOptimizer(inner_lr)
-opt_outter = AdaBeliefOptimizer(outter_lr)
+# opt_inner = AdaBeliefOptimizer(inner_lr)
+# opt_outter = AdaBeliefOptimizer(outter_lr)
 
 def cnn():
     Input = tf.keras.Input([28, 28, 1])
     Input_n = Input/128.0 - 1
     conv1 = tf.keras.layers.Conv2D(32, [3, 3], strides=(2, 2), padding="SAME", activation=tf.nn.relu)(Input_n) #[14,14]
-    conv2 = tf.keras.layers.Conv2D(32, [3, 3], strides=(2, 2), padding="SAME", activation=tf.nn.relu)(conv1) #[7,7]
-    conv3 = tf.keras.layers.Conv2D(32, [3, 3], strides=(2, 2), padding="SAME", activation=tf.nn.relu)(conv2) #[4,4]
+    conv2 = tf.keras.layers.Conv2D(64, [3, 3], strides=(2, 2), padding="SAME", activation=tf.nn.relu)(conv1) #[7,7]
+    conv3 = tf.keras.layers.Conv2D(128, [3, 3], strides=(2, 2), padding="SAME", activation=tf.nn.relu)(conv2) #[4,4]
     fc = tf.keras.layers.Flatten()(conv3)
     fc1 = tf.keras.layers.Dense(128, activation=tf.nn.relu)(fc)
-    fc2 = tf.keras.layers.Dense(128, activation=tf.nn.relu)(fc1)
-    fc3 = tf.keras.layers.Dense(128, activation=tf.nn.relu)(fc2)
+    fc2 = tf.keras.layers.Dense(256, activation=tf.nn.relu)(fc1)
+    fc3 = tf.keras.layers.Dense(512, activation=tf.nn.relu)(fc2)
     out = tf.keras.layers.Dense(1, activation=None)(fc3)
     return tf.keras.Model(inputs=Input, outputs=out)
 pass 

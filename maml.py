@@ -41,7 +41,7 @@ cnn_model = cnn()
 # initialized, and use it to inferece something is a way to initialize 
 # the varialbe.
 imgs, labs = next(kmnist_tr_iter)
-_ = cnn_model(imgs)
+_ = cnn_model(imgs) # 1)for initializing the model. 2)for define the loss function out-of the loop 
 loss_inner = lambda: tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=meta_labs, logits=cnn_model(imgs)))
 
 for step in range(5000):

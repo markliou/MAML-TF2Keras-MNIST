@@ -1,12 +1,20 @@
 import numpy as np 
 import tensorflow as tf # use the tf2.4
 import tensorflow_datasets as tfds 
+import tensorflow_addons as tfa
+from adabelief_tf import AdaBeliefOptimizer
 
-inner_lr = 1E-4
-outter_lr = 1E-4
+inner_lr = 1E-3
+outter_lr = 1E-3
 inner_task_loop_no = 32 # give 32 tasks of 2ways-1shot
-opt_inner = tf.keras.optimizers.RMSprop(inner_lr)
-opt_outter = tf.keras.optimizers.RMSprop(outter_lr,  centered=True, clipnorm=10.)
+# opt_inner = tf.keras.optimizers.Adagrad(inner_lr)
+# opt_outter = tf.keras.optimizers.Adagrad(outter_lr, clipnorm=1.)
+# opt_inner = tfa.optimizers.NovoGrad(inner_lr)
+# opt_outter = tfa.optimizers.NovoGrad(outter_lr, clipnorm=1.)
+# opt_inner = tfa.optimizers.RectifiedAdam(inner_lr)
+# opt_outter = tfa.optimizers.RectifiedAdam(outter_lr, clipnorm=1.)
+opt_inner = AdaBeliefOptimizer(inner_lr)
+opt_outter = AdaBeliefOptimizer(outter_lr)
 
 def cnn():
     Input = tf.keras.Input([28, 28, 1])
